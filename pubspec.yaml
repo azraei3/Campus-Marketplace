@@ -1,0 +1,23 @@
+name: campus_marketplace
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.11.4
+
+dependencies:
+  cloud_firestore: ^6.3.0
+  firebase_auth: ^6.4.0
+  firebase_core: ^4.7.0
+  flutter:
+    sdk: flutter
+  google_fonts: ^8.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
