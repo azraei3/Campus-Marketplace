@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../login_screen.dart';
-import '../home_screen.dart';
-import '../forgot_password_screen.dart';
-import '../register_screen.dart';
-import '../profile_screen.dart';
+import '../screens/login_screen.dart';
+import '../screens/home_screen.dart';
+import '../screens/forgot_password_screen.dart';
+import '../screens/register_screen.dart';
+import '../screens/profile_screen.dart';
 
 class AppRouter {
   final GoRouter router = GoRouter(
