@@ -87,4 +87,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'campusmarketplace-19060.firebasestorage.app',
     measurementId: 'G-53GJ4EVVSN',
   );
+
 }
