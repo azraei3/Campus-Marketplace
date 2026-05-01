@@ -14,7 +14,7 @@
       },
       "oauth_client": [
         {
-          "client_id": "302266171798-u3s0phu8ap3bvc9rhv2td0e10t9aj3js.apps.googleusercontent.com",
+          "client_id": "302266171798-u95q19au3nj9k5fj12vc24ip1tjqruen.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -29,6 +29,13 @@
             {
               "client_id": "302266171798-u3s0phu8ap3bvc9rhv2td0e10t9aj3js.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "302266171798-00cgp3qmh5he3m2jne0i08tgasf1aard.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.campusMarketplace"
+              }
             }
           ]
         }
