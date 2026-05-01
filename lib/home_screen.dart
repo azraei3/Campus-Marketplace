@@ -1,10 +1,12 @@
-import 'package:campus_marketplace/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:go_router/go_router.dart';
+
 import 'login_screen.dart';
+import 'profile_screen.dart';
 
 class HomeScreen extends StatelessWidget{
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context){
@@ -18,10 +20,11 @@ class HomeScreen extends StatelessWidget{
           icon: const Icon(Icons.account_circle),
           onPressed: () async{
             if(context.mounted){
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const ProfileScreen()),
-              );
+              context.go('/profile');
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(builder: (context) => const ProfileScreen()),
+              // );
             }
           }
         ),
@@ -30,10 +33,11 @@ class HomeScreen extends StatelessWidget{
           onPressed: () async {
             await FirebaseAuth.instance.signOut();
             if (context.mounted){
-              Navigator.pushReplacement(
-                context, 
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-              );
+              context.go('/login');
+              // Navigator.pushReplacement(
+              //   context, 
+              //   MaterialPageRoute(builder: (context) => const LoginScreen()),
+              // );
             }
           }
         )

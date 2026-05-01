@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'register_screen.dart'; // Make sure this matches your register screen file name
-import 'home_screen.dart';
-import 'forgot_password_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
@@ -41,13 +39,8 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       print("Login Successful!");
-      //TODO: Navigate to Campus Marketplace Home Screen
-      //Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
       if(mounted){
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen())
-        );
+        context.go('/');
       }
     } on FirebaseAuthException catch (e) {
       setState(() {
@@ -124,10 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: (){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()),
-                    );
+                  context.go('/forgot-password');
                 },
                 child: const Text('Forgot Password?'),
               ),
@@ -155,10 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
             // Navigation to Register Screen
             TextButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const RegisterScreen()),
-                );
+                context.go('/register');
               },
               child: const Text("Don't have an account? Sign up here"),
             ),
