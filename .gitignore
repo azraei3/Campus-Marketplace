@@ -33,6 +33,17 @@ migrate_working_dir/
 /build/
 /coverage/
 
+# Generated plugin registrants
+**/generated_plugin_registrant.dart
+**/generated_plugins.cmake
+**/generated_plugin_registrant.h
+**/generated_plugin_registrant.cpp
+
+# Platform-specific generated build files
+/windows/flutter/ephemeral/
+/linux/flutter/ephemeral/
+/macos/Flutter/ephemeral/
+
 # Symbolication related
 app.*.symbols
 
