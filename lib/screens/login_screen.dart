@@ -48,6 +48,14 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  bool _passwordVisible = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _passwordVisible = true;
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -60,6 +68,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Campus Marketplace'),
+        centerTitle: true,
+        toolbarHeight: 80,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -87,11 +97,20 @@ class _LoginScreenState extends State<LoginScreen> {
             
             TextField(
               controller: _passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(
+              obscureText: _passwordVisible,
+              decoration: InputDecoration(
                 labelText: 'Password',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.lock),
+
+                suffixIcon: IconButton(
+                  icon: Icon(_passwordVisible ? Icons.visibility : Icons.visibility_off),
+                  onPressed: () {
+                    setState(() {
+                      _passwordVisible = !_passwordVisible;
+                    });
+                  },
+                ),
               ),
             ),
             const SizedBox(height: 20),
