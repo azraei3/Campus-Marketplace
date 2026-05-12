@@ -23,25 +23,39 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Campus Marketplace',
       theme: ThemeData(
+        useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.black, 
-          brightness: Brightness.dark,
+          seedColor: const Color(0xFF89986D),
+          primary: const Color(0xFF89986D),
+          secondary: const Color(0xFF9CAB84),
+          surface: const Color(0xFFF6F0D7),
+          brightness: Brightness.light,
+        ),
+        scaffoldBackgroundColor: const Color(0xFFF6F0D7),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF89986D),
+          foregroundColor: Colors.white,
+          elevation: 0,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF89986D),
+            foregroundColor: Colors.white,
           ),
-
-        textTheme: TextTheme(
+        ),
+        textTheme: GoogleFonts.montserratTextTheme(
+          ThemeData.light().textTheme,
+        ).copyWith(
           displayLarge: const TextStyle(
             fontSize: 72,
             fontWeight: FontWeight.bold,
           ),
-          titleLarge: GoogleFonts.oswald(
+          titleLarge: const TextStyle(
             fontSize: 30,
+            fontWeight: FontWeight.bold,
           ),
-          bodyMedium: GoogleFonts.merriweather(),
-          displaySmall: GoogleFonts.pacifico(),
-        ),  
-        
-        primarySwatch:  Colors.grey,
-      ),      
+        ),
+      ),
       routerConfig: AppRouter().router,
     );
   }
