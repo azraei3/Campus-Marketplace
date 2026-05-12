@@ -43,26 +43,26 @@ class AppRouter {
       ),
 
       GoRoute(
+        path: '/forgot-password',
+        builder: (BuildContext context, GoRouterState state) {
+          return const ForgotPasswordScreen();
+        }
+      ),
+
+      GoRoute(
+        path: '/register',
+        builder: (BuildContext context, GoRouterState state) {
+          return const RegisterScreen();
+        }
+      ),
+
+      GoRoute(
         path: '/',
         builder: (BuildContext context, GoRouterState state) {
           return const HomeScreen();
         },
 
         routes: <RouteBase>[
-          GoRoute(
-            path: 'forgot-password',
-            builder: (BuildContext context, GoRouterState state) {
-              return const ForgotPasswordScreen();
-            }
-          ),
-
-          GoRoute(
-            path: 'register',
-            builder: (BuildContext context, GoRouterState state) {
-              return const RegisterScreen();
-            }
-          ),
-
           GoRoute(
             path: 'profile',
             builder: (BuildContext context, GoRouterState state) {

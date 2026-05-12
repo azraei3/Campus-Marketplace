@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
-//import 'home_screen.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
+import '../services/auth_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -21,51 +20,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _isLoading = false;
   String _errorMessage = '';
 
+  final AuthService _authService = AuthService();
+
   Future<void> _registerUser() async {
     setState(() {
       _isLoading = true;
       _errorMessage = '';
     });
 
-    String email = _emailController.text.trim();
-    String password = _passwordController.text.trim();
-
-    // 1. Validate University Email
-    if (!email.toLowerCase().endsWith('utm.my')) { // Adjust this to your specific uni domain!
-      setState(() {
-        _errorMessage = 'Please use a valid university email to register.';
-        _isLoading = false;
-      });
-      return;
-    }
-
-    // 2. Create the account in Firebase
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
+      await _authService.register(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+        name: _nameController.text.trim(),
       );
       
-      //Send the verification email
-      await userCredential.user?.sendEmailVerification();
-      //store profile in firestore
-      await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userCredential.user!.uid)
-        .set({
-          'name': _nameController.text.trim(),
-          'email': email,
-          'createdAt': FieldValue.serverTimestamp(),
-        });
-      //Sign out immediately so they have to log in after verifying
-      await FirebaseAuth.instance.signOut();
-
       if (mounted) {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
             title: const Text('Verify Your Email'),
-            content: Text('A verfication link has been sent to $email. Please check your inbox or spam folder.'),
+            content: Text('A verfication link has been sent to ${_emailController.text}. Please check your inbox or spam folder.'),
             actions: [
               TextButton(
                 onPressed: (){
@@ -83,17 +58,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       // Example navigation (You will need to create a HomeScreen later):
       //Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
 
-    } on FirebaseAuthException catch (e) {
-      setState(() {
-        if (e.code == 'weak-password') {
-          _errorMessage = 'The password provided is too weak.';
-        } else if (e.code == 'email-already-in-use') {
-          _errorMessage = 'An account already exists for that email.';
-        } else {
-          _errorMessage = e.message ?? 'An unknown error occurred.';
-        }
-      });
-    } catch (e) {
+    } 
+    catch (e) {
       setState(() {
         _errorMessage = e.toString();
       });

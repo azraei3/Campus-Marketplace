@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
+
+import '../services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -10,6 +11,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
+  final AuthService _authService = AuthService();
+
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   
@@ -23,36 +27,17 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
+      final user = await _authService.logIn(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
       );
-      
-      //Check email verified
-      if (userCredential.user != null && !userCredential.user!.emailVerified){
-        await FirebaseAuth.instance.signOut();
-        setState((){
-          _errorMessage = 'Please verify your email before logging in. Check your email inbox or spam folder';
-          _isLoading = false;
-        });
-        return;
-      }
 
       print("Login Successful!");
       if(mounted){
         context.go('/');
       }
-    } on FirebaseAuthException catch (e) {
-      setState(() {
-        // Firebase recently updated error codes for security to just 'invalid-credential'
-        // but we can check for common ones just in case.
-        if (e.code == 'user-not-found' || e.code == 'wrong-password' || e.code == 'invalid-credential') {
-          _errorMessage = 'Invalid email or password.';
-        } else {
-          _errorMessage = e.message ?? 'An unknown error occurred.';
-        }
-      });
-    } catch (e) {
+    } 
+    catch (e) {
       setState(() {
         _errorMessage = e.toString();
       });
@@ -117,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: (){
-                  context.go('/forgot-password');
+                  context.push('/forgot-password');
                 },
                 child: const Text('Forgot Password?'),
               ),
@@ -145,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
             // Navigation to Register Screen
             TextButton(
               onPressed: () {
-                context.go('/register');
+                context.push('/register');
               },
               child: const Text("Don't have an account? Sign up here"),
             ),
