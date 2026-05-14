@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 
+import 'drawer_items.dart';
+
 class HomeScreen extends StatelessWidget{
   const HomeScreen({super.key});
 
@@ -14,32 +16,18 @@ class HomeScreen extends StatelessWidget{
        title: const Text('Home'),
        actions: [
         IconButton(
-          icon: const Icon(Icons.account_circle),
-          onPressed: () async{
-            if(context.mounted){
-              context.go('/profile');
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => const ProfileScreen()),
-              // );
-            }
+          icon: const Icon(Icons.notifications_rounded),
+          onPressed: () {
+
           }
         ),
-        IconButton(
-          icon: const Icon(Icons.logout),
-          onPressed: () async {
-            await FirebaseAuth.instance.signOut();
-            if (context.mounted){
-              context.go('/login');
-              // Navigator.pushReplacement(
-              //   context, 
-              //   MaterialPageRoute(builder: (context) => const LoginScreen()),
-              // );
-            }
-          }
-        )
-       ] 
+       ],
       ),
+      drawer: Drawer(
+        // backgroundColor: Theme.of(context).colorScheme.secondary,
+        child: const DrawerItems(),
+      ),
+
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
