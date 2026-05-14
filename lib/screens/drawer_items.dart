@@ -17,6 +17,7 @@ class DrawerItems extends StatelessWidget {
                 if(context.mounted){
                   context.go('/profile');
                 }
+                Navigator.pop(context);
               },
               child: SizedBox(
                 height: 110,
