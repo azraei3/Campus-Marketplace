@@ -59,6 +59,25 @@ class DrawerItems extends StatelessWidget {
                 ),
               ),
             ),
+
+            ListTile(
+              leading: const Icon(Icons.inbox_outlined),
+              title: const Text('Inbox'),
+              onTap: () {},
+            ),
+
+            ListTile(
+              leading: const Icon(Icons.favorite_border_rounded),
+              title: const Text('Saved Items'),
+              onTap: () {},
+            ),
+
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Settings'),
+              onTap: () {},
+            ),
+
             ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('Logout'),
