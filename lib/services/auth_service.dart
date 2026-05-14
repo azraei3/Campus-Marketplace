@@ -1,8 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../models/user_model.dart';
+
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final _db = FirebaseFirestore.instance;
 
 //login Future async function
   Future<User?> logIn(String email, String password) async {
@@ -38,27 +41,41 @@ class AuthService {
         throw Exception('Please use a valid university email to register.');
       }
 
-      // 2. Create the account in Firebase
+      // 2. Create the account in Firebase, FirebaseAuth
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      //Send the verification email
-      await userCredential.user?.sendEmailVerification();
-      
-      //store profile in firestore
-      await FirebaseFirestore.instance
+      User? user = userCredential.user;
+
+      if (user != null) {
+        //3. Update Auth Display Name, to allow user.displayName to work
+        await user.updateDisplayName(name);
+
+        //4. Create UserModel instance
+        final newUser = UserModel(
+          uid: user.uid,
+          name: name,
+          email: email
+        );
+
+        //5. Store in instance Firestore with converter
+        final docRef = _db
         .collection('users')
-        .doc(userCredential.user!.uid)
-        .set({
-          'name': name,
-          'email': email,
-          'createdAt': FieldValue.serverTimestamp(),
-          'uid': userCredential.user!.uid,
-        });
-      
+        .withConverter(fromFirestore: UserModel.fromFirestore, toFirestore: (UserModel newUser, options) => newUser.toFirestore(),
+        )
+        .doc(user.uid);
+
+        //6. Set Firestore document with data
+        await docRef.set(newUser);
+
+        //7. Send verification email
+        await user.sendEmailVerification();
+      }
+
       await FirebaseAuth.instance.signOut();
+      return user;
     }
     on FirebaseAuthException catch (e) {
       if(e.code == 'weak-password'){

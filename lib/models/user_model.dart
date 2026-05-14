@@ -13,7 +13,7 @@ class UserModel {
     this.createdAt,
   });
 
-  //Converting Firestore 'document' to UserModel
+  //Converting Firestore 'document' data to UserModel Dart object
   factory UserModel.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
     SnapshotOptions? options,
@@ -23,7 +23,7 @@ class UserModel {
       uid: snapshot.id, //uses actual document ID even if 'uid' field is missing in Firestore instead of data?['uid'] 
       name: data?['name'] ?? 'Unknown',
       email: data?['email'] ?? '',
-      createdAt: data?['createdAt']?.toDate(),
+      createdAt: (data?['createdAt'] as Timestamp ).toDate()
     );
   }
 
@@ -32,7 +32,7 @@ class UserModel {
       'uid': uid,
       'name': name,
       'email': email,
-      if (createdAt != null) 'createdAt': createdAt,
+      'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : FieldValue.serverTimestamp()
     };
   }
 }

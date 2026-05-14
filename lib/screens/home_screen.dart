@@ -50,7 +50,7 @@ class HomeScreen extends StatelessWidget{
             ),
             const SizedBox(height: 20),
             Text(
-              user?.email ?? 'Unknown User',
+              user?.displayName ?? 'Unknown User',
               style: Theme.of(context).textTheme.bodyMedium,
             )
           ]
