@@ -4,85 +4,156 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../screens/login_screen.dart';
-import '../screens/home_screen.dart';
+import '../screens/chats/chat_list_screen.dart';
+import '../screens/chats/chat_screen.dart';
 import '../screens/forgot_password_screen.dart';
-import '../screens/register_screen.dart';
+import '../screens/home_screen.dart';
+import '../screens/listings/create_listing_screen.dart';
+import '../screens/listings/edit_listing_screen.dart';
+import '../screens/listings/listing_analytics_screen.dart';
+import '../screens/listings/listing_detail_screen.dart';
+import '../screens/listings/my_listings_screen.dart';
+import '../screens/listings/saved_listings_screen.dart';
+import '../screens/login_screen.dart';
 import '../screens/profile_screen.dart';
+import '../screens/ratings/seller_profile_screen.dart';
+import '../screens/ratings/submit_rating_screen.dart';
+import '../screens/register_screen.dart';
+import '../screens/requests/incoming_requests_screen.dart';
+import '../screens/requests/my_requests_screen.dart';
+import '../screens/requests/request_detail_screen.dart';
 
 class AppRouter {
   final GoRouter router = GoRouter(
     initialLocation: '/',
-    refreshListenable: GoRouterRefreshStream(FirebaseAuth.instance.authStateChanges()), //tells Gorouter to listen to change, to rerun redirect logic
+    refreshListenable:
+        GoRouterRefreshStream(FirebaseAuth.instance.authStateChanges()),
     redirect: (BuildContext context, GoRouterState state) {
       final bool loggedIn = FirebaseAuth.instance.currentUser != null;
       final bool loggingIn = state.matchedLocation == '/login';
       final bool registering = state.matchedLocation == '/register';
-      final bool forgettingPassword = state.matchedLocation == '/forgot-password';
+      final bool forgettingPassword =
+          state.matchedLocation == '/forgot-password';
 
-      if(!loggedIn){
-        //redirect to /login if not logged in and not on public page
-        if(!loggingIn && !registering && !forgettingPassword){
+      if (!loggedIn) {
+        if (!loggingIn && !registering && !forgettingPassword) {
           return '/login';
         }
-      }
-      else {
-        if (loggingIn) {
-          return '/';
-        }
+      } else {
+        if (loggingIn) return '/';
       }
       return null;
     },
-
     routes: <RouteBase>[
       GoRoute(
         path: '/login',
-        builder: (BuildContext context, GoRouterState state) {
-          return const LoginScreen();
-        }
+        builder: (_, __) => const LoginScreen(),
       ),
-
       GoRoute(
         path: '/forgot-password',
-        builder: (BuildContext context, GoRouterState state) {
-          return const ForgotPasswordScreen();
-        }
+        builder: (_, __) => const ForgotPasswordScreen(),
       ),
-
       GoRoute(
         path: '/register',
-        builder: (BuildContext context, GoRouterState state) {
-          return const RegisterScreen();
-        }
+        builder: (_, __) => const RegisterScreen(),
       ),
-
       GoRoute(
         path: '/',
-        builder: (BuildContext context, GoRouterState state) {
-          return const HomeScreen();
-        },
-
+        builder: (_, __) => const HomeScreen(),
         routes: <RouteBase>[
           GoRoute(
             path: 'profile',
-            builder: (BuildContext context, GoRouterState state) {
-              return const ProfileScreen();
-            }
-          )
-        ]  
-      )
-    ]
+            builder: (_, __) => const ProfileScreen(),
+          ),
+          GoRoute(
+            path: 'listings/create',
+            builder: (_, __) => CreateListingScreen(),
+          ),
+          GoRoute(
+            path: 'my-listings',
+            builder: (_, __) => const MyListingsScreen(),
+          ),
+          GoRoute(
+            path: 'saved',
+            builder: (_, __) => const SavedListingsScreen(),
+          ),
+          GoRoute(
+            path: 'listings/:listingId',
+            builder: (_, state) {
+              final id = state.pathParameters['listingId'] ?? '';
+              return ListingDetailScreen(listingId: id);
+            },
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'edit',
+                builder: (_, state) {
+                  final id = state.pathParameters['listingId'] ?? '';
+                  return EditListingScreen(listingId: id);
+                },
+              ),
+              GoRoute(
+                path: 'analytics',
+                builder: (_, state) {
+                  final id = state.pathParameters['listingId'] ?? '';
+                  return ListingAnalyticsScreen(listingId: id);
+                },
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'my-requests',
+            builder: (_, __) => const MyRequestsScreen(),
+          ),
+          GoRoute(
+            path: 'incoming-requests',
+            builder: (_, __) => const IncomingRequestsScreen(),
+          ),
+          GoRoute(
+            path: 'requests/:requestId',
+            builder: (_, state) {
+              final id = state.pathParameters['requestId'] ?? '';
+              return RequestDetailScreen(requestId: id);
+            },
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'rate',
+                builder: (_, state) {
+                  final id = state.pathParameters['requestId'] ?? '';
+                  return SubmitRatingScreen(requestId: id);
+                },
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'sellers/:sellerId',
+            builder: (_, state) {
+              final id = state.pathParameters['sellerId'] ?? '';
+              return SellerProfileScreen(sellerId: id);
+            },
+          ),
+          GoRoute(
+            path: 'chats',
+            builder: (_, __) => const ChatListScreen(),
+          ),
+          GoRoute(
+            path: 'chats/:chatId',
+            builder: (_, state) {
+              final id = state.pathParameters['chatId'] ?? '';
+              return ChatScreen(chatId: id);
+            },
+          ),
+        ],
+      ),
+    ],
   );
 }
 
-//This class listens to the stream of auth changes and notifies GoRouter to recheck the redirect logic whenever there is a change (like login/logout)
-//uesd in first GoRouter
 class GoRouterRefreshStream extends ChangeNotifier {
   GoRouterRefreshStream(Stream<dynamic> stream) {
     notifyListeners();
     _subscription = stream.asBroadcastStream().listen(
-      (dynamic _) => notifyListeners(),
-    );
+          (dynamic _) => notifyListeners(),
+        );
   }
 
   late final StreamSubscription<dynamic> _subscription;

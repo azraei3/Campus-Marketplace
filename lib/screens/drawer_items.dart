@@ -43,17 +43,18 @@ class DrawerItems extends StatelessWidget {
                               children: [
                                 Text(
                                   user?.displayName ?? 'Unknown User',
-                                  style: TextStyle(fontWeight: FontWeight.bold)
+                                  style: const TextStyle(fontWeight: FontWeight.bold)
                                 ),
                                 Text(
-                                  'User ID: XXX'
+                                  user?.email ?? '',
+                                  style: const TextStyle(fontSize: 12),
                                 ),
                               ],
                             ),
                           ),
                         ],
                       ),
-                      Icon(Icons.arrow_forward_ios)
+                      const Icon(Icons.arrow_forward_ios)
                     ],
                   ),
                 ),
@@ -61,15 +62,57 @@ class DrawerItems extends StatelessWidget {
             ),
 
             ListTile(
+              leading: const Icon(Icons.add_box_outlined),
+              title: const Text('Sell an Item'),
+              onTap: () {
+                Navigator.pop(context);
+                context.push('/listings/create');
+              },
+            ),
+
+            ListTile(
+              leading: const Icon(Icons.storefront_outlined),
+              title: const Text('My Listings'),
+              onTap: () {
+                Navigator.pop(context);
+                context.push('/my-listings');
+              },
+            ),
+
+            ListTile(
+              leading: const Icon(Icons.outbox_outlined),
+              title: const Text('My Requests'),
+              onTap: () {
+                Navigator.pop(context);
+                context.push('/my-requests');
+              },
+            ),
+
+            ListTile(
               leading: const Icon(Icons.inbox_outlined),
-              title: const Text('Inbox'),
-              onTap: () {},
+              title: const Text('Incoming Requests'),
+              onTap: () {
+                Navigator.pop(context);
+                context.push('/incoming-requests');
+              },
+            ),
+
+            ListTile(
+              leading: const Icon(Icons.chat_bubble_outline),
+              title: const Text('Chats'),
+              onTap: () {
+                Navigator.pop(context);
+                context.push('/chats');
+              },
             ),
 
             ListTile(
               leading: const Icon(Icons.favorite_border_rounded),
               title: const Text('Saved Items'),
-              onTap: () {},
+              onTap: () {
+                Navigator.pop(context);
+                context.push('/saved');
+              },
             ),
 
             ListTile(
