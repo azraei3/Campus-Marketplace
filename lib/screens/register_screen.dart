@@ -11,12 +11,10 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  // These controllers grab the text from the input fields
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
 
-  // To show loading spinners and error messages
   bool _isLoading = false;
   String _errorMessage = '';
 
@@ -53,20 +51,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
           )
         );
       }
-      //print("Registration Successful!");
-      
-      // Example navigation (You will need to create a HomeScreen later):
-      //Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
-
-    } 
+    }
     catch (e) {
+      if (!mounted) return;
       setState(() {
         _errorMessage = e.toString();
       });
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -96,8 +92,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
               style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 40),
-            
-            // Name Input
             TextField(
               controller: _nameController,
               keyboardType: TextInputType.name,
@@ -108,8 +102,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ),
             const SizedBox(height: 20),
-
-            // Email Input
             TextField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
@@ -120,11 +112,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            
-            // Password Input
             TextField(
               controller: _passwordController,
-              obscureText: true, // Hides the password
+              obscureText: true,
               decoration: const InputDecoration(
                 labelText: 'Password',
                 border: OutlineInputBorder(),
@@ -132,8 +122,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            
-            // Error Message Display
             if (_errorMessage.isNotEmpty)
               Text(
                 _errorMessage,
@@ -141,9 +129,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 textAlign: TextAlign.center,
               ),
             const SizedBox(height: 20),
-            
-            // Register Button
-            _isLoading 
+            _isLoading
                 ? const Center(child: CircularProgressIndicator()) 
                 : ElevatedButton(
                     onPressed: _registerUser,

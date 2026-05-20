@@ -27,24 +27,26 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      final user = await _authService.logIn(
+      await _authService.logIn(
         _emailController.text.trim(),
         _passwordController.text.trim(),
       );
 
-      print("Login Successful!");
       if(mounted){
         context.go('/');
       }
-    } 
+    }
     catch (e) {
+      if (!mounted) return;
       setState(() {
         _errorMessage = e.toString();
       });
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -144,8 +146,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
             
             const SizedBox(height: 15),
-            
-            // Navigation to Register Screen
             TextButton(
               onPressed: () {
                 context.push('/register');

@@ -25,24 +25,29 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       await FirebaseAuth.instance.sendPasswordResetEmail(
         email: _emailController.text.trim(),
       );
+      if (!mounted) return;
       setState(() {
         _message = 'Password reset link sent! Check your email.';
         _isError = false;
       });
     } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
       setState(() {
         _message = e.message ?? 'An error occurred. Please try again.';
         _isError = true;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _message = 'An error occurred. Please try again.';
         _isError = true;
       });
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
