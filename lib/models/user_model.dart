@@ -4,26 +4,38 @@ class UserModel {
   final String uid;
   final String name;
   final String email;
+  final bool isVerified;
+  final double averageRating;
+  final int totalRatings;
   final DateTime? createdAt;
 
   UserModel({
     required this.uid,
     required this.name,
     required this.email,
+    this.isVerified = false,
+    this.averageRating = 0.0,
+    this.totalRatings = 0,
     this.createdAt,
   });
 
-  //Converting Firestore 'document' data to UserModel Dart object
   factory UserModel.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
     SnapshotOptions? options,
   ) {
     final data = snapshot.data();
     return UserModel(
-      uid: snapshot.id, //uses actual document ID even if 'uid' field is missing in Firestore instead of data?['uid'] 
+      uid: snapshot.id,
       name: data?['name'] ?? 'Unknown',
       email: data?['email'] ?? '',
-      createdAt: (data?['createdAt'] as Timestamp ).toDate()
+      isVerified: data?['isVerified'] == true,
+      averageRating: (data?['averageRating'] is num)
+          ? (data!['averageRating'] as num).toDouble()
+          : 0.0,
+      totalRatings: (data?['totalRatings'] is num)
+          ? (data!['totalRatings'] as num).toInt()
+          : 0,
+      createdAt: (data?['createdAt'] as Timestamp?)?.toDate(),
     );
   }
 
@@ -32,7 +44,12 @@ class UserModel {
       'uid': uid,
       'name': name,
       'email': email,
-      'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : FieldValue.serverTimestamp()
+      'isVerified': isVerified,
+      'averageRating': averageRating,
+      'totalRatings': totalRatings,
+      'createdAt': createdAt != null
+          ? Timestamp.fromDate(createdAt!)
+          : FieldValue.serverTimestamp(),
     };
   }
 }
