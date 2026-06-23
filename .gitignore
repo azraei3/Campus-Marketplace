@@ -54,3 +54,15 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/build/
+
+# Node modules for scripts
+**/node_modules/
+
+# Firebase Service Account private keys
+campusmarketplace-*.json
+serviceAccountKey.json
+*.local.json
+
+# API Keys (untracked)
+/lib/services/api_keys.dart
