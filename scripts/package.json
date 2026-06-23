@@ -1,0 +1,12 @@
+{
+  "name": "campus-marketplace-seeder",
+  "version": "1.0.0",
+  "description": "Demo data seeder for Campus Marketplace",
+  "main": "seed_chats.js",
+  "scripts": {
+    "seed": "node seed_chats.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.0.0"
+  }
+}
