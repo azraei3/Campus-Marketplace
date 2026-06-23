@@ -116,6 +116,15 @@ class DrawerItems extends StatelessWidget {
             ),
 
             ListTile(
+              leading: const Icon(Icons.bar_chart),
+              title: const Text('Dashboard & Reports'),
+              onTap: () {
+                Navigator.pop(context);
+                context.push('/dashboard');
+              },
+            ),
+
+            ListTile(
               leading: const Icon(Icons.settings),
               title: const Text('Settings'),
               onTap: () {},

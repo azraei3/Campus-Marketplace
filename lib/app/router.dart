@@ -22,6 +22,7 @@ import '../screens/register_screen.dart';
 import '../screens/requests/incoming_requests_screen.dart';
 import '../screens/requests/my_requests_screen.dart';
 import '../screens/requests/request_detail_screen.dart';
+import '../screens/reports/user_dashboard_screen.dart';
 
 class AppRouter {
   final GoRouter router = GoRouter(
@@ -143,6 +144,10 @@ class AppRouter {
             },
           ),
         ],
+      ),
+      GoRoute(
+        path: '/dashboard',
+        builder: (_, __) => const UserDashboardScreen(),
       ),
     ],
   );
