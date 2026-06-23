@@ -98,6 +98,17 @@ class ChatService {
         .map((snap) => snap.docs.map((d) => d.data()).toList());
   }
 
+  /// Returns the last [limit] messages from a chat, sorted oldest-first.
+  Future<List<MessageModel>> getRecentMessages(String chatId,
+      {int limit = 15}) async {
+    final snap = await _messages(chatId)
+        .orderBy('createdAt', descending: true)
+        .limit(limit)
+        .get();
+    final msgs = snap.docs.map((d) => d.data()).toList();
+    return msgs.reversed.toList();
+  }
+
   Future<void> sendMessage({
     required String chatId,
     required String text,
