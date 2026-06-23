@@ -5,6 +5,7 @@ import '../models/listing_model.dart';
 import '../services/listing_service.dart';
 import 'drawer_items.dart';
 import 'listings/widgets/listing_card.dart';
+import 'widgets/ai_assistant_sheet.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,17 +14,34 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   final ListingService _listingService = ListingService();
   final TextEditingController _searchController = TextEditingController();
 
   String? _selectedCategory;
   String _searchQuery = '';
   bool _verifiedOnly = false;
+  // Pulsing FAB controllers
+  late final AnimationController _pulseController;
+  late final Animation<double> _pulseAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1400),
+    )..repeat(reverse: true);
+    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.15).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+  }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _pulseController.dispose();
     super.dispose();
   }
 
@@ -47,6 +65,21 @@ class _HomeScreenState extends State<HomeScreen> {
     await Future<void>.delayed(const Duration(milliseconds: 300));
   }
 
+  void _openAiAssistant() {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => DraggableScrollableSheet(
+        initialChildSize: 0.72,
+        minChildSize: 0.45,
+        maxChildSize: 0.95,
+        expand: false,
+        builder: (_, controller) => const AiAssistantSheet(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,10 +94,32 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       drawer: const Drawer(child: DrawerItems()),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.push('/listings/create'),
-        icon: const Icon(Icons.add),
-        label: const Text('Sell'),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          // AI assistant toggle
+          ScaleTransition(
+            scale: _pulseAnimation,
+            child: FloatingActionButton(
+              heroTag: 'ai_fab',
+              onPressed: _openAiAssistant,
+              backgroundColor: const Color(0xFF7B3FE4),
+              tooltip: 'AI Campus Assistant',
+              mini: true,
+              child: const Icon(Icons.auto_awesome,
+                  color: Colors.white, size: 18),
+            ),
+          ),
+          const SizedBox(height: 10),
+          // Create listing button
+          FloatingActionButton.extended(
+            heroTag: 'sell_fab',
+            onPressed: () => context.push('/listings/create'),
+            icon: const Icon(Icons.add),
+            label: const Text('Sell'),
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -183,7 +238,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                           _verifiedOnly
                                       ? 'No listings match your filters.'
                                       : 'No listings yet. Be the first to sell!',
-                                  style: const TextStyle(color: Colors.grey),
+                                  style:
+                                      const TextStyle(color: Colors.grey),
                                 ),
                               ],
                             ),
