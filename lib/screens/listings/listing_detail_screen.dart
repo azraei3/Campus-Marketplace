@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../models/listing_model.dart';
+import '../../services/ai_service.dart';
 import '../../services/chat_service.dart';
 import '../../services/listing_service.dart';
 import '../../services/recommendation_service.dart';
@@ -29,6 +30,7 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
 
   late final Stream<ListingModel?> _listingStream;
   late Future<RecommendationResult> _recommendationsFuture;
+  Future<Map<String, String>>? _dealScoreFuture;
   bool _viewCounted = false;
 
   @override
@@ -173,6 +175,8 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
                         'Location',
                         listing.location.isEmpty ? '-' : listing.location,
                       ),
+                      const SizedBox(height: 16),                      // Deal Badge
+                      _buildDealScoreSection(listing),
                       const SizedBox(height: 16),
                       const Text(
                         'Description',
@@ -514,6 +518,161 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
         SnackBar(content: Text(e.toString())),
       );
     }
+  }  // Deal score details
+  Widget _buildDealScoreSection(ListingModel listing) {
+    // Lazily create the future only once per listing load
+    _dealScoreFuture ??= AiService.analyzeDealScore(
+      title: listing.title,
+      category: listing.category,
+      condition: listing.condition,
+      price: listing.price,
+      description: listing.description,
+      saveCount: listing.saveCount,
+      viewCount: listing.viewCount,
+    );
+
+    return FutureBuilder<Map<String, String>>(
+      future: _dealScoreFuture,
+      builder: (context, snap) {
+        if (snap.connectionState == ConnectionState.waiting) {
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Row(
+              children: [
+                SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+                SizedBox(width: 10),
+                Text(
+                  'AI is analysing this deal...',
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+              ],
+            ),
+          );
+        }
+
+        if (!snap.hasData || snap.hasError) return const SizedBox.shrink();
+        final result = snap.data!;
+        final grade = result['grade'] ?? 'B';
+        final label = result['label'] ?? 'Fair Price';
+        final reason = result['reason'] ?? '';
+        final hexColor = result['color'] ?? '#F57F17';
+
+        // Parse hex color
+        final Color baseColor = Color(
+          int.parse(hexColor.replaceFirst('#', '0xFF')),
+        );
+        final Color lightColor = baseColor.withValues(alpha: 0.1);
+        final Color borderColor = baseColor.withValues(alpha: 0.3);
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [lightColor, Colors.white],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: borderColor, width: 1.5),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Grade badge
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [baseColor, baseColor.withValues(alpha: 0.75)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: baseColor.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Text(
+                    grade,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.auto_awesome,
+                            size: 13, color: Colors.grey),
+                        const SizedBox(width: 4),
+                        const Text(
+                          'AI Deal Score',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: baseColor,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            label,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      reason,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey.shade800,
+                        height: 1.35,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildRecommendationSection(ListingModel listing) {

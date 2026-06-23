@@ -42,8 +42,7 @@ class ListingCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            AspectRatio(
-              aspectRatio: 1,
+            Expanded(
               child: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -139,6 +138,7 @@ class ListingCard extends StatelessWidget {
             ),
           ],
         ),
+
       ),
     );
   }
