@@ -48,7 +48,7 @@ class ReportingService {
 
     final String uid = user.uid;
 
-    // 1. Fetch user's listings
+
     final listingsSnap = await _db
         .collection('listings')
         .where('sellerId', isEqualTo: uid)
@@ -74,14 +74,14 @@ class ReportingService {
       categoryDistribution[category] = (categoryDistribution[category] ?? 0) + 1;
     }
 
-    // 2. Fetch requests received
+
     final incomingRequestsSnap = await _db
         .collection('requests')
         .where('sellerId', isEqualTo: uid)
         .count()
         .get();
         
-    // 3. Fetch requests sent
+
     final sentRequestsSnap = await _db
         .collection('requests')
         .where('buyerId', isEqualTo: uid)

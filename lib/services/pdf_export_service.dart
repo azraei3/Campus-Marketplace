@@ -18,7 +18,7 @@ class PdfExportService {
           return pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              // Header
+
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
@@ -43,7 +43,7 @@ class PdfExportService {
               pw.Divider(thickness: 2, color: PdfColors.deepPurple300),
               pw.SizedBox(height: 20),
 
-              // Overview Section
+
               pw.Text('Account Overview', style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
               pw.SizedBox(height: 10),
               _buildStatRow('Total Listings Created', data.totalListings.toString()),
@@ -55,14 +55,14 @@ class PdfExportService {
               
               pw.SizedBox(height: 30),
 
-              // Category Breakdown
+
               pw.Text('Listings by Category', style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
               pw.SizedBox(height: 10),
               ...data.categoryDistribution.entries.map((e) => _buildStatRow(e.key, e.value.toString())),
 
               pw.Spacer(),
               
-              // Footer
+
               pw.Divider(),
               pw.Center(
                 child: pw.Text('Generated securely by Campus Marketplace AI-Reporting System', style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey)),

@@ -177,7 +177,7 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> with SingleTi
           const SizedBox(width: 16),
           FloatingActionButton.extended(
             heroTag: 'pdfBtn',
-            backgroundColor: const Color(0xFFA855F7), // Neon purple
+            backgroundColor: const Color(0xFFA855F7),
             foregroundColor: Colors.white,
             onPressed: _exportPdf,
             icon: const Icon(Icons.picture_as_pdf),
